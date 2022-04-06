@@ -123,17 +123,17 @@ func (c *ConsistentHash) Remove(node Node) error {
 	return nil
 }
 
-func (c *ConsistentHash) GetNode(key string) Node {
+func (c *ConsistentHash) GetNode(key string) (Node, error) {
 	c.RLock()
 	defer c.RUnlock()
 
 	if len(c.nodes) == 0 {
-		return nil
+		return nil, errors.New("node size is 0")
 	}
 	hash := c.hashKey(key)
 	i := c.getPosition(hash)
 
-	return c.nodes[c.circle[c.hashSortedNodes[i]]].node
+	return c.nodes[c.circle[c.hashSortedNodes[i]]].node, nil
 }
 
 func (c *ConsistentHash) getPosition(hash uint32) int {
